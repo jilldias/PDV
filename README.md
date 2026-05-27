@@ -1,57 +1,80 @@
-# Sistema CRUD de Álbuns Musicais
+# PDV SYSTEM
 
-## Descrição do Projeto
+Sistema de Ponto de Venda (PDV) desenvolvido em Java com Spring Boot no backend e JavaFX no frontend desktop.
 
-Este projeto consiste no desenvolvimento de uma aplicação **CRUD (Create, Read, Update, Delete)** para gerenciamento de álbuns musicais.  
-O projeto não está completo e posteriormente serão adicionados novas funcionalidades, melhorias para estudos de UX/UI,e refatoração dos primeiros códigos.
-O sistema permite o cadastro e armazenamento das seguintes informações em um banco de dados:
+O projeto surgiu a partir da evolução de um CRUD previamente desenvolvido e está sendo utilizado como base de aprendizado para arquitetura de software, APIs REST, banco de dados relacionais e aplicações desktop.
 
-- **Nome do álbum**
-- **Nome do artista**
-- **Ano de publicação**
-
-Além do armazenamento dos dados, o sistema implementa as seguintes funcionalidades:
-
-- ➕ **Adicionar** novos álbuns  
-- ✏️ **Alterar** informações de um álbum já cadastrado  
-- ❌ **Excluir** registros existentes  
-- 📋 **Listar** os álbuns salvos no banco de dados  
+O sistema ainda está em desenvolvimento e passará por melhorias estruturais e visuais ao longo da evolução do projeto.
 
 ---
 
-## Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
-### Backend
-- Java  
-- SpringBoot
-- API Rest
+## Backend
+- Java 26
+- Spring Boot
+- Spring Data JPA
+- Hibernate
+- Maven
 - MariaDB
 
-### Frontend
-- HTML
+## Frontend
+- JavaFX
+- FXML
 - CSS
-- JavaScript  
-- React      
 
 ---
 
-## Objetivo
+# Funcionalidades Planejadas
 
-O objetivo principal deste projeto é aplicar conceitos de:
-
-- Desenvolvimento full stack  
-- Integração entre frontend e backend  
-- Persistência de dados  
-- Operações básicas de banco de dados  
-- Estruturação de APIs REST  
+- Cadastro de produtos
+- Controle de estoque
+- Sistema de vendas
+- Histórico de vendas
+- Controle de usuários
+- Dashboard administrativo
+- Relatórios
+- Integração frontend/backend
 
 ---
 
-## Estrutura do Sistema
+# Estrutura do Projeto
 
 ```bash
-Frontend (React + JavaScript)
-        ↓
-API Backend (Java)
-        ↓
-Banco de Dados
+src/main/java/com/pdv
+│
+├── controller
+├── service
+├── repository
+├── model
+├── dto
+├── config
+├── security
+└── Application.java
+```
+
+---
+
+
+# Objetivos do Projeto
+
+- Evoluir um CRUD simples para um sistema comercial completo
+- Aprender arquitetura em camadas
+- Consolidar conhecimentos em Spring Boot
+- Desenvolver aplicações desktop com JavaFX
+- Praticar integração entre API e interface gráfica
+
+---
+
+# Roadmap
+
+- [ ] CRUD de produtos
+- [ ] Controle de estoque
+- [ ] Sistema de vendas
+- [ ] Login e autenticação
+- [ ] Relatórios
+- [ ] Testes automatizados
+- [ ] Dockerização
+- [ ] Deploy
+
+---
