@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/26"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.pdv.javafx.controller.DashboardController"
+            stylesheets="/css/style.css">
+    <top>
+        <VBox spacing="10" styleClass="dashboard-header">
+            <Label text="Dashboard PDV" styleClass="title-label"/>
+            <Label text="Visão geral das operações do caixa e vendas" styleClass="subtitle-text"/>
+        </VBox>
+    </top>
+    <center>
+        <GridPane hgap="20" vgap="20" padding="20">
+            <Label text="Total Vendido:" styleClass="metric-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <Label fx:id="totalVendidoLabel" text="R$ 0,00" styleClass="metric-value" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <Label text="Produtos Cadastrados:" styleClass="metric-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Label fx:id="produtosCadastradosLabel" text="0" styleClass="metric-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Vendas do Dia:" styleClass="metric-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <Label fx:id="vendasDiaLabel" text="0" styleClass="metric-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Estoque Baixo:" styleClass="metric-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <Label fx:id="estoqueBaixoLabel" text="0" styleClass="metric-value" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+    </center>
+    <bottom>
+        <TableView fx:id="vendasRecentesTable" prefHeight="200" styleClass="table-view">
+            <columns>
+                <TableColumn text="Venda"/>
+                <TableColumn text="Funcionário"/>
+                <TableColumn text="Total"/>
+            </columns>
+        </TableView>
+    </bottom>
+</BorderPane>

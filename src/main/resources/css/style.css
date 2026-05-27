@@ -1,0 +1,54 @@
+.root {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-background-color: #1f2937;
+    -fx-text-fill: #e5e7eb;
+}
+
+.title-label {
+    -fx-font-size: 26px;
+    -fx-text-fill: #ffffff;
+}
+
+.subtitle-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #cbd5e1;
+}
+
+.primary-button {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+}
+
+.error-text {
+    -fx-fill: #f97316;
+}
+
+.dashboard-header {
+    -fx-padding: 24;
+    -fx-background-color: #111827;
+}
+
+.metric-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #cbd5e1;
+}
+
+.metric-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.table-view {
+    -fx-border-color: rgba(148,163,184,0.3);
+    -fx-border-width: 1;
+    -fx-background-color: #111827;
+}
+
+.toolbar {
+    -fx-padding: 12;
+    -fx-background-color: #111827;
+}
