@@ -3,69 +3,257 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DISCOTECA</title>
+  <title>PDV - Sistema de Ponto de Venda</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <div class="jukebox-frame">
-      <header class="jukebox-header">
-        <div class="header-title">
-          <div class="title-text">DISCOTECA</div>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>💳 PDV</h1>
+        <p>Ponto de Venda</p>
+      </div>
+      <nav class="menu">
+        <button class="menu-item active" data-section="vendas">
+          <span>📊</span> Vendas
+        </button>
+        <button class="menu-item" data-section="produtos">
+          <span>📦</span> Produtos
+        </button>
+        <button class="menu-item" data-section="relatorios">
+          <span>📈</span> Relatórios
+        </button>
+        <button class="menu-item" data-section="caixa">
+          <span>💰</span> Caixa
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <h2 id="page-title">Vendas</h2>
+        <div class="user-info">
+          <span>Operador</span>
         </div>
       </header>
 
-      <main class="content-grid">
-        <section class="form-panel">
-          <div class="section-title">
-            <span>ADICIONAR / ALTERAR DISCO</span>
+      <!-- Vendas Section -->
+      <section id="vendas-section" class="section active">
+        <div class="grid-container">
+          <!-- Produtos -->
+          <div class="panel">
+            <h3>Produtos</h3>
+            <div class="search-bar">
+              <input
+                type="text"
+                id="search-produto"
+                placeholder="🔍 Buscar produto..."
+              />
+            </div>
+            <div id="produtos-list" class="products-grid"></div>
           </div>
 
-          <div class="form-card">
-            <label class="field">
-              <span>DISCO</span>
-              <input id="albumName" type="text" placeholder="Digite o nome do disco" />
-            </label>
+          <!-- Carrinho -->
+          <div class="panel carrinho-panel">
+            <h3>Carrinho</h3>
+            <div id="carrinho-items" class="carrinho-items"></div>
+            <div class="carrinho-resume">
+              <div class="resume-item">
+                <span>Subtotal:</span>
+                <span id="subtotal">R$ 0,00</span>
+              </div>
+              <div class="resume-item">
+                <span>Impostos:</span>
+                <span id="impostos">R$ 0,00</span>
+              </div>
+              <div class="resume-item total">
+                <span>Total:</span>
+                <span id="total">R$ 0,00</span>
+              </div>
+            </div>
 
-            <label class="field">
-              <span>CANTOR / BANDA</span>
-              <input id="artistName" type="text" placeholder="Digite o nome do cantor / banda" />
-            </label>
+            <!-- Dados da Venda -->
+            <div class="form-group">
+              <label>Cliente</label>
+              <input type="text" id="cliente-nome" placeholder="Nome do cliente" />
+            </div>
 
-            <label class="field">
-              <span>ANO</span>
-              <input id="year" type="number" placeholder="Digite o ano de lançamento" min="1900" max="2099" />
-            </label>
+            <div class="form-group">
+              <label>CPF/CNPJ</label>
+              <input type="text" id="cliente-cpf" placeholder="CPF/CNPJ" />
+            </div>
 
-            <div class="button-row">
-<button id="saveButton" class="btn btn-primary">🎵 SALVAR DISCO</button>
-              <button id="clearButton" class="btn btn-secondary">LIMPAR</button>
+            <div class="form-group">
+              <label>Forma de Pagamento</label>
+              <select id="forma-pagamento">
+                <option value="DINHEIRO">Dinheiro</option>
+                <option value="CREDITO">Crédito</option>
+                <option value="DEBITO">Débito</option>
+                <option value="PIX">PIX</option>
+              </select>
+            </div>
+
+            <button id="btn-limpar-carrinho" class="btn btn-secondary">
+              Limpar
+            </button>
+            <button id="btn-finalizar-venda" class="btn btn-primary">
+              💳 Finalizar Venda
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Produtos Section -->
+      <section id="produtos-section" class="section">
+        <div class="panel">
+          <h3>Gerenciar Produtos</h3>
+          <button id="btn-novo-produto" class="btn btn-primary">
+            ➕ Novo Produto
+          </button>
+
+          <div id="formulario-produto" class="formulario-produto" style="display: none;">
+            <h4>Novo Produto</h4>
+            <input
+              type="text"
+              id="produto-nome"
+              placeholder="Nome do produto"
+            />
+            <input
+              type="text"
+              id="produto-descricao"
+              placeholder="Descrição"
+            />
+            <input
+              type="number"
+              id="produto-preco"
+              placeholder="Preço"
+              step="0.01"
+            />
+            <input
+              type="number"
+              id="produto-estoque"
+              placeholder="Estoque"
+            />
+            <select id="produto-categoria">
+              <option value="">Selecionar Categoria</option>
+            </select>
+            <button id="btn-salvar-produto" class="btn btn-primary">
+              Salvar
+            </button>
+            <button id="btn-cancelar-produto" class="btn btn-secondary">
+              Cancelar
+            </button>
+          </div>
+
+          <table id="produtos-table" class="table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="produtos-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Relatórios Section -->
+      <section id="relatorios-section" class="section">
+        <div class="panel">
+          <h3>Relatórios</h3>
+          <div class="filtro-relatorio">
+            <input type="date" id="data-inicio" />
+            <input type="date" id="data-fim" />
+            <button id="btn-gerar-relatorio" class="btn btn-primary">
+              Gerar Relatório
+            </button>
+            <button id="btn-exportar-pdf" class="btn btn-secondary">
+              📄 Exportar PDF
+            </button>
+          </div>
+          <table id="relatorio-table" class="table">
+            <thead>
+              <tr>
+                <th>ID Venda</th>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Valor</th>
+                <th>Pagamento</th>
+              </tr>
+            </thead>
+            <tbody id="relatorio-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Caixa Section -->
+      <section id="caixa-section" class="section">
+        <div class="grid-container">
+          <div class="panel">
+            <h3>Movimentação de Caixa</h3>
+            <div class="info-box">
+              <div class="info-item">
+                <span>Status:</span>
+                <span id="caixa-status">Fechado</span>
+              </div>
+              <div class="info-item">
+                <span>Valor Inicial:</span>
+                <span id="caixa-inicial">R$ 0,00</span>
+              </div>
+              <div class="info-item">
+                <span>Valor Final:</span>
+                <span id="caixa-final">R$ 0,00</span>
+              </div>
+            </div>
+            <button id="btn-abrir-caixa" class="btn btn-primary">
+              Abrir Caixa
+            </button>
+            <button id="btn-fechar-caixa" class="btn btn-danger">
+              Fechar Caixa
+            </button>
+          </div>
+
+          <div class="panel">
+            <h3>Resumo do Dia</h3>
+            <div class="info-box">
+              <div class="info-item">
+                <span>Total de Vendas:</span>
+                <span id="total-vendas">R$ 0,00</span>
+              </div>
+              <div class="info-item">
+                <span>Quantidade de Itens:</span>
+                <span id="qtd-itens">0</span>
+              </div>
+              <div class="info-item">
+                <span>Ticket Médio:</span>
+                <span id="ticket-medio">R$ 0,00</span>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+    </main>
+  </div>
 
-        <section class="list-panel">
-          <div class="section-title">
-            <span>ALBUNS SALVOS</span>
-          </div>
-
-          <div class="list-header">
-            <span>DISCO</span>
-            <span>CANTOR / BANDA</span>
-            <span>ANO</span>
-            <span>AÇÕES</span>
-          </div>
-
-          <div id="albumList" class="album-list"></div>
-        </section>
-      </main>
-    </div>
-
-    <div class="vinyl-area">
-      <div class="vinyl-disc"></div>
-      <div class="tonearm"></div>
+  <!-- Modal de Confirmação -->
+  <div id="modal-confirmacao" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3 id="modal-titulo">Confirmação</h3>
+      <p id="modal-mensagem"></p>
+      <div class="modal-actions">
+        <button id="modal-cancelar" class="btn btn-secondary">Cancelar</button>
+        <button id="modal-confirmar" class="btn btn-primary">Confirmar</button>
+      </div>
     </div>
   </div>
+
+  <!-- Notificação -->
+  <div id="notificacao" class="notificacao" style="display: none;"></div>
 
   <script src="script.js"></script>
 </body>

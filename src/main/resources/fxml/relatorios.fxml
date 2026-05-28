@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.RelatorioController" stylesheets="@/css/style.css">
+    <top>
+        <VBox spacing="10.0" styleClass="dashboard-header" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <HBox spacing="10.0">
+                <Button fx:id="backButton" text="Voltar" />
+                <Label styleClass="title-label" text="Relatórios" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox spacing="16.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <HBox spacing="10.0">
+                <Button fx:id="vendasReportButton" styleClass="primary-button" text="Gerar resumo de vendas" />
+                <Button fx:id="estoqueReportButton" styleClass="primary-button" text="Gerar relatório de estoque" />
+            </HBox>
+            <Label text="Resultado" styleClass="title-label" />
+            <TextArea fx:id="reportArea" editable="false" prefHeight="400.0" wrapText="true" VBox.vgrow="ALWAYS" />
+        </VBox>
+    </center>
+</BorderPane>

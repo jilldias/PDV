@@ -1,11 +1,17 @@
 package com.pdv.javafx.controller;
 
+import com.pdv.model.Produto;
+import com.pdv.service.ProdutoService;
+import com.pdv.javafx.StageManager;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProdutoFxController {
 
     @FXML
@@ -18,30 +24,40 @@ public class ProdutoFxController {
     private Button novoProdutoButton;
 
     @FXML
-    private TableView<?> produtoTable;
+    private TableView<Produto> produtoTable;
 
     @FXML
-    private TableColumn<?, ?> nomeColumn;
+    private TableColumn<Produto, String> nomeColumn;
 
     @FXML
-    private TableColumn<?, ?> categoriaColumn;
+    private TableColumn<Produto, String> categoriaColumn;
 
     @FXML
-    private TableColumn<?, ?> precoColumn;
+    private TableColumn<Produto, ?> precoColumn;
 
     @FXML
-    private TableColumn<?, ?> estoqueColumn;
+    private TableColumn<Produto, Integer> estoqueColumn;
 
+    private final ProdutoService produtoService;
+    private final StageManager stageManager;
+
+    public ProdutoFxController(ProdutoService produtoService, StageManager stageManager) {
+        this.produtoService = produtoService;
+        this.stageManager = stageManager;
+    }
+
+    @FXML
     public void initialize() {
         searchButton.setOnAction(event -> buscarProdutos());
         novoProdutoButton.setOnAction(event -> abrirFormularioProduto());
+        buscarProdutos();
     }
 
     private void buscarProdutos() {
-        // Integração com API REST futura
+        produtoTable.setItems(FXCollections.observableArrayList(produtoService.listarTodos()));
     }
 
     private void abrirFormularioProduto() {
-        // Abrir tela de cadastro/edição de produto
+        // Módulo de cadastro de produto será implementado em próxima iteração
     }
 }

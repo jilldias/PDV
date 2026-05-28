@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -8,27 +9,38 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/26"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.pdv.javafx.controller.ProdutoFxController"
-            stylesheets="/css/style.css">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.ProdutoFxController" stylesheets="@/css/style.css">
     <top>
-        <HBox spacing="10" padding="20" styleClass="toolbar">
-            <TextField fx:id="searchField" promptText="Pesquisar produto" HBox.hgrow="ALWAYS"/>
-            <Button fx:id="searchButton" text="Buscar"/>
-            <Button fx:id="novoProdutoButton" text="Novo Produto"/>
-        </HBox>
+        <VBox spacing="10.0" styleClass="dashboard-header" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <HBox spacing="10.0">
+                <Button fx:id="backButton" text="Voltar" />
+                <Label styleClass="title-label" text="Gestão de Produtos" />
+            </HBox>
+        </VBox>
     </top>
-
     <center>
-        <TableView fx:id="produtoTable" styleClass="table-view">
-            <columns>
-                <TableColumn fx:id="nomeColumn" text="Nome"/>
-                <TableColumn fx:id="categoriaColumn" text="Categoria"/>
-                <TableColumn fx:id="precoColumn" text="Preço"/>
-                <TableColumn fx:id="estoqueColumn" text="Estoque"/>
-            </columns>
-        </TableView>
+        <VBox spacing="15.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <HBox spacing="10.0">
+                <TextField fx:id="searchField" promptText="Pesquisar produto" HBox.hgrow="ALWAYS" />
+                <Button fx:id="searchButton" text="Buscar" />
+                <Button fx:id="novoProdutoButton" styleClass="primary-button" text="Novo Produto" />
+            </HBox>
+            <TableView fx:id="produtoTable" prefHeight="400.0" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="nomeColumn" prefWidth="150.0" text="Nome" />
+                    <TableColumn fx:id="categoriaColumn" prefWidth="120.0" text="Categoria" />
+                    <TableColumn fx:id="precoColumn" prefWidth="100.0" text="Preço" />
+                    <TableColumn fx:id="estoqueColumn" prefWidth="80.0" text="Estoque" />
+                </columns>
+            </TableView>
+        </VBox>
     </center>
 </BorderPane>

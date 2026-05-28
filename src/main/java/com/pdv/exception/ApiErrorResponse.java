@@ -7,17 +7,13 @@ public class ApiErrorResponse {
 
     private LocalDateTime timestamp;
     private int status;
+    private String error;
     private String message;
+    private String path;
     private List<String> errors;
 
     public ApiErrorResponse() {
-    }
-
-    public ApiErrorResponse(LocalDateTime timestamp, int status, String message, List<String> errors) {
-        this.timestamp = timestamp;
-        this.status = status;
-        this.message = message;
-        this.errors = errors;
+        this.timestamp = LocalDateTime.now();
     }
 
     public LocalDateTime getTimestamp() {
@@ -36,12 +32,28 @@ public class ApiErrorResponse {
         this.status = status;
     }
 
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public List<String> getErrors() {

@@ -1,11 +1,15 @@
 package com.pdv.javafx.controller;
 
+import com.pdv.auth.AuthService;
+import com.pdv.javafx.StageManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import org.springframework.stereotype.Component;
 
+@Component
 public class LoginController {
 
     @FXML
@@ -19,6 +23,14 @@ public class LoginController {
 
     @FXML
     private Text errorMessage;
+
+    private final AuthService authService;
+    private final StageManager stageManager;
+
+    public LoginController(AuthService authService, StageManager stageManager) {
+        this.authService = authService;
+        this.stageManager = stageManager;
+    }
 
     @FXML
     public void initialize() {
@@ -34,6 +46,11 @@ public class LoginController {
             return;
         }
 
-        errorMessage.setText("Autenticação local não implementada");
+        try {
+            authService.authenticate(login, senha);
+            stageManager.showScene("/fxml/dashboard.fxml", "Dashboard PDV", true);
+        } catch (Exception e) {
+            errorMessage.setText("Login ou senha inválidos");
+        }
     }
 }

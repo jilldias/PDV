@@ -7,6 +7,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -28,13 +29,13 @@ public class RelatorioService {
 
             try (PDPageContentStream conteudo = new PDPageContentStream(documento, pagina)) {
                 conteudo.beginText();
-                conteudo.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
                 conteudo.newLineAtOffset(50, 750);
                 conteudo.showText("Relatório de Vendas");
                 conteudo.endText();
 
                 int y = 720;
-                conteudo.setFont(PDType1Font.HELVETICA, 10);
+                conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
                 for (Venda venda : vendas) {
                     if (y < 100) {
                         conteudo.close();

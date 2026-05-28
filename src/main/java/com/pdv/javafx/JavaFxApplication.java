@@ -1,24 +1,35 @@
 package com.pdv.javafx;
 
+import com.pdv.PdvApplication;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.application.Platform;
 import javafx.stage.Stage;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.context.ConfigurableApplicationContext;
 
 public class JavaFxApplication extends Application {
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+    private ConfigurableApplicationContext springContext;
 
-        stage.setTitle("PDV Desktop - Login");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+    @Override
+    public void init() {
+        SpringApplication application = new SpringApplication(PdvApplication.class);
+        application.setWebApplicationType(WebApplicationType.NONE);
+        springContext = application.run();
+    }
+
+    @Override
+    public void start(Stage stage) {
+        StageManager stageManager = springContext.getBean(StageManager.class);
+        stageManager.setPrimaryStage(stage);
+        stageManager.showScene("/fxml/login.fxml", "PDV Desktop - Login", false);
+    }
+
+    @Override
+    public void stop() {
+        springContext.close();
+        Platform.exit();
     }
 
     public static void main(String[] args) {
