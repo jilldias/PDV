@@ -1,6 +1,5 @@
 package com.pdv.javafx.controller;
 
-import com.pdv.auth.AuthService;
 import com.pdv.javafx.StageManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,11 +23,9 @@ public class LoginController {
     @FXML
     private Text errorMessage;
 
-    private final AuthService authService;
     private final StageManager stageManager;
 
-    public LoginController(AuthService authService, StageManager stageManager) {
-        this.authService = authService;
+    public LoginController(StageManager stageManager) {
         this.stageManager = stageManager;
     }
 
@@ -48,9 +45,16 @@ public class LoginController {
         }
 
         try {
-            if (authService.login(login, senha)) {
+            // Autenticação temporária: aceita qualquer login/senha não vazio
+            // TODO: Implementar autenticação real com banco de dados
+            if (!login.isBlank() && !senha.isBlank()) {
                 senhaField.clear();
-                stageManager.showScene("/fxml/dashboard.fxml", "Dashboard PDV", true);
+                loginField.clear();
+                stageManager.showScene(
+                        "/fxml/dashboard.fxml",
+                        "Dashboard PDV",
+                        true
+                );
             } else {
                 exibirErro("Login ou senha inválidos");
                 senhaField.clear();
@@ -64,6 +68,6 @@ public class LoginController {
 
     private void exibirErro(String mensagem) {
         errorMessage.setText(mensagem);
-        errorMessage.setStyle("-fx-text-fill: #d9534f; -fx-font-weight: bold;");
+        errorMessage.setStyle("-fx-text-fill: #dc2626; -fx-font-weight: bold;");
     }
 }

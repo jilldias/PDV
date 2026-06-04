@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      spacing="15"
+      prefWidth="600"
+      prefHeight="700"
+      style="-fx-padding: 20;">
+
+    <!-- REMOVER: fx:controller="com.pdv.javafx.controller.CadastroProdutoController" -->
+    <!-- O Spring injetará via StageManager -->
+
+    <!-- HEADER COM BOTÃO VOLTAR -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Button
+                fx:id="voltarButton"
+                text="← Voltar"
+                style="-fx-font-size: 12; -fx-padding: 8 15 8 15;"/>
+        <Label
+                text="Cadastro de Produto"
+                style="-fx-font-size: 18; -fx-font-weight: bold;"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- CONTEÚDO DO FORMULÁRIO -->
+    <VBox spacing="12">
+        <Label text="Informações do Produto" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+        <TextField
+                fx:id="nomeField"
+                promptText="Nome do Produto"
+                prefWidth="400"/>
+
+        <TextField
+                fx:id="codigoBarrasField"
+                promptText="Código de Barras"
+                prefWidth="400"/>
+
+        <TextField
+                fx:id="precoField"
+                promptText="Preço (ex: 10.50)"
+                prefWidth="400"/>
+
+        <TextField
+                fx:id="estoqueField"
+                promptText="Estoque"
+                prefWidth="400"/>
+
+        <ComboBox
+                fx:id="categoriaCombo"
+                promptText="Selecione uma Categoria"
+                prefWidth="400"/>
+
+        <CheckBox
+                fx:id="ativoCheck"
+                text="Produto Ativo"
+                selected="true"
+                style="-fx-font-size: 12;"/>
+
+        <Separator/>
+
+        <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
+            <Button
+                    text="Salvar"
+                    onAction="#salvarProduto"
+                    style="-fx-font-size: 12; -fx-padding: 10 30 10 30; -fx-background-color: #2563eb; -fx-text-fill: white; -fx-border-radius: 4;"/>
+            <Button
+                    text="Limpar"
+                    onAction="#limparCampos"
+                    style="-fx-font-size: 12; -fx-padding: 10 30 10 30;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ESPAÇO FLEXÍVEL -->
+    <Region VBox.vgrow="ALWAYS"/>
+
+</VBox>

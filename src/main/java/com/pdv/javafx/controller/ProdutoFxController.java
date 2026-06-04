@@ -5,11 +5,11 @@ import com.pdv.service.ProdutoService;
 import com.pdv.javafx.StageManager;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
 
 @Component
 public class ProdutoFxController {
@@ -36,7 +36,7 @@ public class ProdutoFxController {
     private TableColumn<Produto, String> categoriaColumn;
 
     @FXML
-    private TableColumn<Produto, ?> precoColumn;
+    private TableColumn<Produto, BigDecimal> precoColumn;
 
     @FXML
     private TableColumn<Produto, Integer> estoqueColumn;
@@ -52,6 +52,17 @@ public class ProdutoFxController {
     @FXML
     public void initialize() {
 
+        // Configurar colunas da tabela
+        nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        categoriaColumn.setCellValueFactory(cellData -> 
+            javafx.beans.binding.Bindings.createStringBinding(
+                () -> cellData.getValue().getCategoria() != null ? 
+                      cellData.getValue().getCategoria().getNome() : "N/A"
+            )
+        );
+        precoColumn.setCellValueFactory(new PropertyValueFactory<>("preco"));
+        estoqueColumn.setCellValueFactory(new PropertyValueFactory<>("estoque"));
+
         backButton.setOnAction(event ->
             stageManager.showScene("/fxml/dashboard.fxml", "PDV Dashboard", true)
         );
@@ -64,12 +75,29 @@ public class ProdutoFxController {
     }
 
     private void buscarProdutos() {
-        produtoTable.setItems(
-            FXCollections.observableArrayList(produtoService.listarTodos())
-        );
+        try {
+            produtoTable.setItems(
+                FXCollections.observableArrayList(produtoService.listarTodos())
+            );
+        } catch (Exception e) {
+            exibirErro("Erro ao carregar produtos: " + e.getMessage());
+        }
     }
 
     private void abrirFormularioProduto() {
-        // Módulo de cadastro de produto será implementado em próxima iteração
+        // Usar resizable=true para manter na mesma Stage
+        stageManager.showScene(
+            "/fxml/cadastro_produto.fxml",
+            "Cadastro Produto",
+            true  // ← CORRIGIDO: Abre na mesma Stage
+        );
+    }
+
+    private void exibirErro(String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erro");
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }
