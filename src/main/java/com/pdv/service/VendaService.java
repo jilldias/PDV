@@ -77,6 +77,7 @@ public class VendaService {
         venda.setItens(itens);
         venda.setValorTotal(valorTotal);
         venda.setDataVenda(LocalDateTime.now());
+        venda.setStatus(VendaStatus.PROCESSADO);
 
         Venda vendaSalva = vendaRepository.save(venda);
         vendaSalva.getItens().forEach(item -> item.setVenda(vendaSalva));

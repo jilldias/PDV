@@ -42,15 +42,28 @@ public class LoginController {
         String senha = senhaField.getText();
 
         if (login == null || login.isBlank() || senha == null || senha.isBlank()) {
-            errorMessage.setText("Preencha login e senha");
+            exibirErro("Preencha login e senha");
+            loginField.requestFocus();
             return;
         }
 
         try {
-            authService.authenticate(login, senha);
-            stageManager.showScene("/fxml/dashboard.fxml", "Dashboard PDV", true);
+            if (authService.login(login, senha)) {
+                senhaField.clear();
+                stageManager.showScene("/fxml/dashboard.fxml", "Dashboard PDV", true);
+            } else {
+                exibirErro("Login ou senha inválidos");
+                senhaField.clear();
+                loginField.requestFocus();
+            }
         } catch (Exception e) {
-            errorMessage.setText("Login ou senha inválidos");
+            exibirErro("Erro ao autenticar. Tente novamente.");
+            e.printStackTrace();
         }
+    }
+
+    private void exibirErro(String mensagem) {
+        errorMessage.setText(mensagem);
+        errorMessage.setStyle("-fx-text-fill: #d9534f; -fx-font-weight: bold;");
     }
 }

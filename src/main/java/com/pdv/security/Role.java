@@ -1,12 +1,18 @@
 package com.pdv.security;
 
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 public enum Role {
-    ADMIN,
-    OPERADOR;
+    ADMIN("Administrador"),
+    GERENTE("Gerente"),
+    VENDEDOR("Vendedor"),
+    OPERADOR_CAIXA("Operador de Caixa");
 
-    public SimpleGrantedAuthority toAuthority() {
-        return new SimpleGrantedAuthority("ROLE_" + name());
+    private final String descricao;
+
+    Role(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getDescricao() {
+        return descricao;
     }
 }

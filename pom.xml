@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -8,15 +8,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+
+        <!-- USE SPRING BOOT 3 -->
+        <version>3.5.0</version>
+
         <relativePath/>
     </parent>
 
-        <groupId>com.pdv</groupId>
-        <artifactId>pdv-desktop</artifactId>
-        <version>1.0.0</version>
+    <groupId>com.pdv</groupId>
+    <artifactId>pdv-desktop</artifactId>
+    <version>1.0.0</version>
 
-        <name>PDV Desktop</name>
+    <name>PDV Desktop</name>
 
     <description>
         Sistema PDV Desktop com JavaFX + Spring Boot + MariaDB
@@ -38,14 +41,14 @@
 
         <!-- SPRING -->
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
+            <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -79,12 +82,22 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
+            <classifier>linux</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
+            <classifier>linux</classifier>
+        </dependency>
+
+        <!-- LOMBOK -->
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- PDF -->
@@ -129,12 +142,26 @@
             <!-- COMPILER -->
 
             <plugin>
+
                 <groupId>org.apache.maven.plugins</groupId>
+
                 <artifactId>maven-compiler-plugin</artifactId>
 
                 <configuration>
+
                     <release>${java.version}</release>
+
+                    <annotationProcessorPaths>
+
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+
+                    </annotationProcessorPaths>
+
                 </configuration>
+
             </plugin>
 
             <!-- SPRING -->
@@ -157,7 +184,7 @@
                 <configuration>
 
                     <mainClass>
-                        com.pdv.PdvDesktopLauncher
+                        com.pdv.javafx.JavaFxApplication
                     </mainClass>
 
                 </configuration>

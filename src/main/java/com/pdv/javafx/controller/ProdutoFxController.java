@@ -24,6 +24,9 @@ public class ProdutoFxController {
     private Button novoProdutoButton;
 
     @FXML
+    private Button backButton;
+
+    @FXML
     private TableView<Produto> produtoTable;
 
     @FXML
@@ -48,13 +51,22 @@ public class ProdutoFxController {
 
     @FXML
     public void initialize() {
+
+        backButton.setOnAction(event ->
+            stageManager.showScene("/fxml/dashboard.fxml", "PDV Dashboard", true)
+        );
+
         searchButton.setOnAction(event -> buscarProdutos());
+
         novoProdutoButton.setOnAction(event -> abrirFormularioProduto());
+
         buscarProdutos();
     }
 
     private void buscarProdutos() {
-        produtoTable.setItems(FXCollections.observableArrayList(produtoService.listarTodos()));
+        produtoTable.setItems(
+            FXCollections.observableArrayList(produtoService.listarTodos())
+        );
     }
 
     private void abrirFormularioProduto() {

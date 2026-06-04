@@ -32,8 +32,9 @@ public class Venda {
     @Column(name = "valor_total", nullable = false, precision = 15, scale = 2)
     private BigDecimal valorTotal;
 
-    @Column(nullable = false, length = 50)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private VendaStatus status;
 
     @Column(name = "data_venda", nullable = false)
     private LocalDateTime dataVenda;
@@ -48,7 +49,7 @@ public class Venda {
         this.id = id;
     }
 
-    public Venda(Long id, Cliente cliente, Funcionario funcionario, Caixa caixa, String formaPagamento, BigDecimal valorTotal, String status, LocalDateTime dataVenda, List<ItemVenda> itens) {
+    public Venda(Long id, Cliente cliente, Funcionario funcionario, Caixa caixa, String formaPagamento, BigDecimal valorTotal, VendaStatus status, LocalDateTime dataVenda, List<ItemVenda> itens) {
         this.id = id;
         this.cliente = cliente;
         this.funcionario = funcionario;
@@ -66,7 +67,7 @@ public class Venda {
             dataVenda = LocalDateTime.now();
         }
         if (status == null) {
-            status = "PROCESSADO";
+            status = VendaStatus.PROCESSADO;
         }
     }
 
@@ -118,11 +119,11 @@ public class Venda {
         this.valorTotal = valorTotal;
     }
 
-    public String getStatus() {
+    public VendaStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(VendaStatus status) {
         this.status = status;
     }
 
