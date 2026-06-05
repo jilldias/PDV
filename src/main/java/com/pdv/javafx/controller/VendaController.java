@@ -3,16 +3,20 @@ package com.pdv.javafx.controller;
 import com.pdv.auth.SessionInfo;
 import com.pdv.javafx.StageManager;
 import com.pdv.javafx.util.CarrinhoCompras;
+import com.pdv.model.Funcionario;
 import com.pdv.model.ItemVenda;
 import com.pdv.model.Produto;
+import com.pdv.model.Venda;
+import com.pdv.service.FuncionarioService;
 import com.pdv.service.ProdutoService;
+import com.pdv.service.VendaService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 @Component
 public class VendaController {
@@ -68,13 +72,21 @@ public class VendaController {
     private final StageManager stageManager;
     private final SessionInfo sessionInfo;
     private final ProdutoService produtoService;
+    private final VendaService vendaService;
+    private final FuncionarioService funcionarioService;
     private final CarrinhoCompras carrinho;
     private Produto produtoSelecionado;
 
-    public VendaController(StageManager stageManager, SessionInfo sessionInfo, ProdutoService produtoService) {
+    public VendaController(StageManager stageManager,
+                           SessionInfo sessionInfo,
+                           ProdutoService produtoService,
+                           VendaService vendaService,
+                           FuncionarioService funcionarioService) {
         this.stageManager = stageManager;
         this.sessionInfo = sessionInfo;
         this.produtoService = produtoService;
+        this.vendaService = vendaService;
+        this.funcionarioService = funcionarioService;
         this.carrinho = new CarrinhoCompras();
     }
 
@@ -170,12 +182,14 @@ public class VendaController {
         }
 
         try {
+            String nomeProduto = produtoSelecionado.getNome();
             carrinho.adicionarProduto(produtoSelecionado, quantidade);
+            vendasTable.refresh();
             atualizarTotal();
             produtoSelecionado = null;
             produtoInfoLabel.setText("");
             quantidadeSpinner.getValueFactory().setValue(1);
-            exibirSucesso(String.format("%s adicionado ao carrinho", produtoSelecionado.getNome()));
+            exibirSucesso(String.format("%s adicionado ao carrinho", nomeProduto));
         } catch (Exception e) {
             exibirErro("Erro ao adicionar ao carrinho: " + e.getMessage());
         }
@@ -206,15 +220,36 @@ public class VendaController {
         }
 
         try {
-            // TODO: Integrar com VendaService para salvar a venda no BD
-            BigDecimal total = carrinho.obterTotal();
-            exibirSucesso(String.format("Venda finalizada! Total: R$ %.2f", total));
+            Funcionario funcionario = obterFuncionario();
+            if (funcionario == null) {
+                exibirErro("Nenhum usuário autenticado para registrar a venda");
+                return;
+            }
+
+            Venda venda = new Venda();
+            venda.setFuncionario(funcionario);
+            venda.setFormaPagamento(formaPagamento);
+            venda.setItens(new ArrayList<>(carrinho.getItens()));
+
+            Venda vendaSalva = vendaService.registrarVenda(venda);
+            exibirSucesso(String.format("Venda %d finalizada! Total: R$ %.2f",
+                    vendaSalva.getId(),
+                    vendaSalva.getValorTotal()));
             carrinho.limpar();
+            vendasTable.refresh();
             atualizarTotal();
             formaPagamentoCombo.getSelectionModel().clearSelection();
         } catch (Exception e) {
             exibirErro("Erro ao finalizar venda: " + e.getMessage());
         }
+    }
+
+    private Funcionario obterFuncionario() {
+        if (sessionInfo.hasAuthenticatedUser()) {
+            return sessionInfo.getAuthenticatedUser();
+        }
+
+        return funcionarioService.buscarPorLogin("admin").orElse(null);
     }
 
     private void atualizarTotal() {

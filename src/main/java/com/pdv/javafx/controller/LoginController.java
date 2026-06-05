@@ -1,5 +1,6 @@
 package com.pdv.javafx.controller;
 
+import com.pdv.auth.AuthService;
 import com.pdv.javafx.StageManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,9 +25,11 @@ public class LoginController {
     private Text errorMessage;
 
     private final StageManager stageManager;
+    private final AuthService authService;
 
-    public LoginController(StageManager stageManager) {
+    public LoginController(StageManager stageManager, AuthService authService) {
         this.stageManager = stageManager;
+        this.authService = authService;
     }
 
     @FXML
@@ -45,9 +48,7 @@ public class LoginController {
         }
 
         try {
-            // Autenticação temporária: aceita qualquer login/senha não vazio
-            // TODO: Implementar autenticação real com banco de dados
-            if (!login.isBlank() && !senha.isBlank()) {
+            if (authService.login(login, senha)) {
                 senhaField.clear();
                 loginField.clear();
                 stageManager.showScene(

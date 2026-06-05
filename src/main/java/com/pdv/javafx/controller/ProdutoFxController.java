@@ -3,6 +3,7 @@ package com.pdv.javafx.controller;
 import com.pdv.model.Produto;
 import com.pdv.service.ProdutoService;
 import com.pdv.javafx.StageManager;
+import com.pdv.javafx.state.ProdutoFormState;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -24,7 +25,16 @@ public class ProdutoFxController {
     private Button novoProdutoButton;
 
     @FXML
+    private Button selecionarProdutoButton;
+
+    @FXML
+    private Button alterarProdutoButton;
+
+    @FXML
     private Button backButton;
+
+    @FXML
+    private Label produtoSelecionadoLabel;
 
     @FXML
     private TableView<Produto> produtoTable;
@@ -43,10 +53,13 @@ public class ProdutoFxController {
 
     private final ProdutoService produtoService;
     private final StageManager stageManager;
+    private final ProdutoFormState produtoFormState;
+    private Produto produtoSelecionado;
 
-    public ProdutoFxController(ProdutoService produtoService, StageManager stageManager) {
+    public ProdutoFxController(ProdutoService produtoService, StageManager stageManager, ProdutoFormState produtoFormState) {
         this.produtoService = produtoService;
         this.stageManager = stageManager;
+        this.produtoFormState = produtoFormState;
     }
 
     @FXML
@@ -70,6 +83,8 @@ public class ProdutoFxController {
         searchButton.setOnAction(event -> buscarProdutos());
 
         novoProdutoButton.setOnAction(event -> abrirFormularioProduto());
+        selecionarProdutoButton.setOnAction(event -> selecionarProduto());
+        alterarProdutoButton.setOnAction(event -> abrirAlteracaoProduto());
 
         buscarProdutos();
     }
@@ -85,11 +100,37 @@ public class ProdutoFxController {
     }
 
     private void abrirFormularioProduto() {
-        // Usar resizable=true para manter na mesma Stage
+        produtoFormState.novo();
         stageManager.showScene(
             "/fxml/cadastro_produto.fxml",
             "Cadastro Produto",
-            true  // ← CORRIGIDO: Abre na mesma Stage
+            true
+        );
+    }
+
+    private void selecionarProduto() {
+        produtoSelecionado = produtoTable.getSelectionModel().getSelectedItem();
+        if (produtoSelecionado == null) {
+            exibirErro("Selecione um produto na tabela");
+            return;
+        }
+
+        produtoSelecionadoLabel.setText("Selecionado: " + produtoSelecionado.getNome());
+    }
+
+    private void abrirAlteracaoProduto() {
+        if (produtoSelecionado == null) {
+            selecionarProduto();
+        }
+        if (produtoSelecionado == null) {
+            return;
+        }
+
+        produtoFormState.editar(produtoSelecionado);
+        stageManager.showScene(
+                "/fxml/cadastro_produto.fxml",
+                "Alterar Produto",
+                true
         );
     }
 

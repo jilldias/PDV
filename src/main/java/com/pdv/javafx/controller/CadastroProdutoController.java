@@ -1,6 +1,7 @@
 package com.pdv.javafx.controller;
 
 import com.pdv.javafx.StageManager;
+import com.pdv.javafx.state.ProdutoFormState;
 import com.pdv.model.Categoria;
 import com.pdv.model.Produto;
 import com.pdv.service.CategoriaService;
@@ -36,33 +37,46 @@ public class CadastroProdutoController {
     @FXML
     private Button voltarButton;
 
+    @FXML
+    private Button salvarButton;
+
+    @FXML
+    private Label tituloLabel;
+
     private final ProdutoService produtoService;
     private final CategoriaService categoriaService;
     private final StageManager stageManager;
+    private final ProdutoFormState produtoFormState;
 
     public CadastroProdutoController(
             ProdutoService produtoService,
             CategoriaService categoriaService,
-            StageManager stageManager) {
+            StageManager stageManager,
+            ProdutoFormState produtoFormState) {
 
         this.produtoService = produtoService;
         this.categoriaService = categoriaService;
         this.stageManager = stageManager;
+        this.produtoFormState = produtoFormState;
     }
 
     @FXML
     public void initialize() {
         // Configurar botão voltar UMA ÚNICA VEZ
-        voltarButton.setOnAction(event -> stageManager.showScene(
-                "/fxml/produtos.fxml",
-                "Produtos",
-                true));
+        voltarButton.setOnAction(event -> voltarParaProdutos());
 
         // Carregar categorias
         carregarCategorias();
 
         // Definir estado inicial
         ativoCheck.setSelected(true);
+
+        if (produtoFormState.isEdicao()) {
+            configurarModoEdicao(produtoFormState.getProdutoEmEdicao());
+        } else {
+            tituloLabel.setText("Cadastro de Produto");
+            salvarButton.setText("Salvar");
+        }
     }
 
     private void carregarCategorias() {
@@ -117,6 +131,13 @@ public class CadastroProdutoController {
 
             Categoria categoria = categoriaCombo.getValue();
 
+            if (produtoFormState.isEdicao()) {
+                produtoService.atualizarProduto(produtoFormState.getProdutoEmEdicao().getId(), produto, categoria);
+                exibirSucesso("Produto atualizado com sucesso!");
+                voltarParaProdutos();
+                return;
+            }
+
             produtoService.criarProduto(produto, categoria);
 
             exibirSucesso("Produto salvo com sucesso!");
@@ -127,6 +148,25 @@ public class CadastroProdutoController {
         } catch (Exception ex) {
             exibirErro("Erro ao salvar produto: " + ex.getMessage());
         }
+    }
+
+    private void configurarModoEdicao(Produto produto) {
+        tituloLabel.setText("Alterar Produto");
+        salvarButton.setText("Alterar");
+        nomeField.setText(produto.getNome());
+        codigoBarrasField.setText(produto.getCodigoBarras());
+        precoField.setText(produto.getPreco() != null ? produto.getPreco().toPlainString() : "");
+        estoqueField.setText(produto.getEstoque() != null ? produto.getEstoque().toString() : "");
+        ativoCheck.setSelected(Boolean.TRUE.equals(produto.getAtivo()));
+        categoriaCombo.setValue(produto.getCategoria());
+    }
+
+    private void voltarParaProdutos() {
+        produtoFormState.novo();
+        stageManager.showScene(
+                "/fxml/produtos.fxml",
+                "Produtos",
+                true);
     }
 
     @FXML

@@ -49,10 +49,11 @@
             <Label text="Caixas Registrados" styleClass="title-label" />
             <TableView fx:id="caixaTable" prefHeight="300.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn prefWidth="75.0" text="ID" />
-                    <TableColumn prefWidth="75.0" text="Status" />
-                    <TableColumn prefWidth="150.0" text="Aberto em" />
-                    <TableColumn prefWidth="100.0" text="Valor Final" />
+                    <TableColumn fx:id="idColumn" prefWidth="75.0" text="ID" />
+                    <TableColumn fx:id="statusColumn" prefWidth="100.0" text="Status" />
+                    <TableColumn fx:id="dataAberturaColumn" prefWidth="180.0" text="Aberto em" />
+                    <TableColumn fx:id="valorInicialColumn" prefWidth="120.0" text="Valor Inicial" />
+                    <TableColumn fx:id="valorFinalColumn" prefWidth="120.0" text="Valor Final" />
                 </columns>
             </TableView>
         </VBox>

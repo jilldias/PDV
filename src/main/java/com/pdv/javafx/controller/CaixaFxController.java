@@ -1,14 +1,19 @@
 package com.pdv.javafx.controller;
 
+import com.pdv.auth.SessionInfo;
 import com.pdv.model.Caixa;
 import com.pdv.model.Funcionario;
+import com.pdv.service.FuncionarioService;
 import com.pdv.service.CaixaService;
 import com.pdv.javafx.StageManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Component
 public class CaixaFxController {
@@ -31,19 +36,50 @@ public class CaixaFxController {
     @FXML
     private TableView<Caixa> caixaTable;
 
+    @FXML
+    private TableColumn<Caixa, Long> idColumn;
+
+    @FXML
+    private TableColumn<Caixa, String> statusColumn;
+
+    @FXML
+    private TableColumn<Caixa, LocalDateTime> dataAberturaColumn;
+
+    @FXML
+    private TableColumn<Caixa, BigDecimal> valorInicialColumn;
+
+    @FXML
+    private TableColumn<Caixa, BigDecimal> valorFinalColumn;
+
     private final StageManager stageManager;
     private final CaixaService caixaService;
+    private final FuncionarioService funcionarioService;
+    private final SessionInfo sessionInfo;
 
     public CaixaFxController(
             StageManager stageManager,
-            CaixaService caixaService
+            CaixaService caixaService,
+            FuncionarioService funcionarioService,
+            SessionInfo sessionInfo
     ) {
         this.stageManager = stageManager;
         this.caixaService = caixaService;
+        this.funcionarioService = funcionarioService;
+        this.sessionInfo = sessionInfo;
     }
 
     @FXML
     public void initialize() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        statusColumn.setCellValueFactory(cellData ->
+                javafx.beans.binding.Bindings.createStringBinding(
+                        () -> cellData.getValue().getStatus() != null
+                                ? cellData.getValue().getStatus().name()
+                                : ""));
+        dataAberturaColumn.setCellValueFactory(new PropertyValueFactory<>("dataAbertura"));
+        valorInicialColumn.setCellValueFactory(new PropertyValueFactory<>("valorInicial"));
+        valorFinalColumn.setCellValueFactory(new PropertyValueFactory<>("valorFinal"));
+
         backButton.setOnAction(event ->
                 stageManager.showScene("/fxml/dashboard.fxml", "Dashboard PDV", true));
 
@@ -55,10 +91,9 @@ public class CaixaFxController {
 
     private void abrirCaixa() {
         try {
-            // Autenticação temporária: solicita nome do operador
-            Funcionario operador = solicitarAutenticacao();
+            Funcionario operador = obterOperador();
             if (operador == null) {
-                exibirErro("Autenticação cancelada");
+                exibirErro("Nenhum usuário autenticado para abrir o caixa");
                 return;
             }
 
@@ -85,10 +120,11 @@ public class CaixaFxController {
                 return;
             }
 
-            caixaService.fecharCaixa(
-                    caixaSelecionado.getId(),
-                    parseBigDecimal(valorFinalField.getText())
-            );
+            BigDecimal valorFinal = valorFinalField.getText() == null || valorFinalField.getText().isBlank()
+                    ? caixaSelecionado.getValorInicial().add(caixaService.calcularTotalVendas(caixaSelecionado))
+                    : parseBigDecimal(valorFinalField.getText());
+
+            caixaService.fecharCaixa(caixaSelecionado.getId(), valorFinal);
             exibirSucesso("Caixa fechado com sucesso!");
 
             carregarCaixas();
@@ -109,45 +145,12 @@ public class CaixaFxController {
         }
     }
 
-    private Funcionario solicitarAutenticacao() {
-        // Dialog simples para autenticação temporária
-        Dialog<Funcionario> dialog = new Dialog<>();
-        dialog.setTitle("Autenticação do Operador");
-        dialog.setHeaderText("Digite seu nome para autenticar");
-        dialog.setResizable(true);
+    private Funcionario obterOperador() {
+        if (sessionInfo.hasAuthenticatedUser()) {
+            return sessionInfo.getAuthenticatedUser();
+        }
 
-        TextField nomeField = new TextField();
-        nomeField.setPromptText("Nome do operador");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new javafx.geometry.Insets(20));
-        grid.add(new Label("Nome:"), 0, 0);
-        grid.add(nomeField, 1, 0);
-
-        dialog.getDialogPane().setContent(grid);
-
-        ButtonType autenticarButton = new ButtonType("Autenticar", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancelarButton = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        dialog.getDialogPane().getButtonTypes().setAll(autenticarButton, cancelarButton);
-
-        dialog.setResultConverter(buttonType -> {
-            if (buttonType == autenticarButton) {
-                String nome = nomeField.getText();
-                if (!nome.isBlank()) {
-                    // Criar funcionário temporário
-                    Funcionario funcionario = new Funcionario();
-                    funcionario.setNome(nome);
-                    funcionario.setId(System.currentTimeMillis()); // ID temporário
-                    return funcionario;
-                }
-            }
-            return null;
-        });
-
-        return dialog.showAndWait().orElse(null);
+        return funcionarioService.buscarPorLogin("admin").orElse(null);
     }
 
     private void exibirErro(String mensagem) {

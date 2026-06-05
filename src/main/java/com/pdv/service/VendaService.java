@@ -19,15 +19,18 @@ public class VendaService {
     private final ProdutoService produtoService;
     private final ClienteService clienteService;
     private final FuncionarioService funcionarioService;
+    private final CaixaService caixaService;
 
     public VendaService(VendaRepository vendaRepository,
                         ProdutoService produtoService,
                         ClienteService clienteService,
-                        FuncionarioService funcionarioService) {
+                        FuncionarioService funcionarioService,
+                        CaixaService caixaService) {
         this.vendaRepository = vendaRepository;
         this.produtoService = produtoService;
         this.clienteService = clienteService;
         this.funcionarioService = funcionarioService;
+        this.caixaService = caixaService;
     }
 
     @Transactional
@@ -43,6 +46,14 @@ public class VendaService {
         if (venda.getCliente() != null && venda.getCliente().getId() != null) {
             cliente = clienteService.buscarPorId(venda.getCliente().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Cliente", "id", venda.getCliente().getId()));
+        }
+
+        Caixa caixa = venda.getCaixa();
+        if (caixa == null || caixa.getId() == null) {
+            caixa = caixaService.buscarCaixaAberto()
+                    .orElseThrow(() -> new IllegalStateException("Abra um caixa antes de finalizar vendas"));
+        } else {
+            caixa = caixaService.buscarPorId(caixa.getId());
         }
 
         List<ItemVenda> itens = venda.getItens().stream().map(item -> {
@@ -74,14 +85,14 @@ public class VendaService {
 
         venda.setFuncionario(funcionario);
         venda.setCliente(cliente);
+        venda.setCaixa(caixa);
         venda.setItens(itens);
         venda.setValorTotal(valorTotal);
         venda.setDataVenda(LocalDateTime.now());
         venda.setStatus(VendaStatus.PROCESSADO);
+        itens.forEach(item -> item.setVenda(venda));
 
-        Venda vendaSalva = vendaRepository.save(venda);
-        vendaSalva.getItens().forEach(item -> item.setVenda(vendaSalva));
-        return vendaSalva;
+        return vendaRepository.save(venda);
     }
 
     public List<Venda> listarTodas() {

@@ -32,7 +32,10 @@
                 <TextField fx:id="searchField" promptText="Pesquisar produto" HBox.hgrow="ALWAYS" />
                 <Button fx:id="searchButton" text="Buscar" />
                 <Button fx:id="novoProdutoButton" styleClass="primary-button" text="Novo Produto" />
+                <Button fx:id="selecionarProdutoButton" text="Selecionar" />
+                <Button fx:id="alterarProdutoButton" styleClass="primary-button" text="Alterar" />
             </HBox>
+            <Label fx:id="produtoSelecionadoLabel" text="Nenhum produto selecionado" />
             <TableView fx:id="produtoTable" prefHeight="400.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="nomeColumn" prefWidth="150.0" text="Nome" />

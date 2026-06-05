@@ -49,10 +49,13 @@ CREATE TABLE vendas (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     data_venda DATETIME NOT NULL,
     valor_total DECIMAL(15, 2) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     funcionario_id BIGINT NOT NULL,
+    caixa_id BIGINT,
     cliente_id BIGINT,
     forma_pagamento VARCHAR(20) NOT NULL,
     CONSTRAINT fk_venda_funcionario FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id),
+    CONSTRAINT fk_venda_caixa FOREIGN KEY (caixa_id) REFERENCES caixas(id),
     CONSTRAINT fk_venda_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
 

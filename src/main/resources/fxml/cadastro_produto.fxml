@@ -6,13 +6,11 @@
 
 <VBox xmlns="http://javafx.com/javafx/21"
       xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.pdv.javafx.controller.CadastroProdutoController"
       spacing="15"
       prefWidth="600"
       prefHeight="700"
       style="-fx-padding: 20;">
-
-    <!-- REMOVER: fx:controller="com.pdv.javafx.controller.CadastroProdutoController" -->
-    <!-- O Spring injetará via StageManager -->
 
     <!-- HEADER COM BOTÃO VOLTAR -->
     <HBox alignment="CENTER_LEFT" spacing="15">
@@ -21,6 +19,7 @@
                 text="← Voltar"
                 style="-fx-font-size: 12; -fx-padding: 8 15 8 15;"/>
         <Label
+                fx:id="tituloLabel"
                 text="Cadastro de Produto"
                 style="-fx-font-size: 18; -fx-font-weight: bold;"/>
     </HBox>
@@ -66,6 +65,7 @@
 
         <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10 0 0 0;">
             <Button
+                    fx:id="salvarButton"
                     text="Salvar"
                     onAction="#salvarProduto"
                     style="-fx-font-size: 12; -fx-padding: 10 30 10 30; -fx-background-color: #2563eb; -fx-text-fill: white; -fx-border-radius: 4;"/>

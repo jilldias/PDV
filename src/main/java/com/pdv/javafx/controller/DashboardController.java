@@ -10,8 +10,13 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Component
 public class DashboardController {
@@ -32,13 +37,19 @@ public class DashboardController {
     private TableView<Venda> vendasRecentesTable;
 
     @FXML
+    private TableColumn<Venda, Long> vendaIdColumn;
+
+    @FXML
+    private TableColumn<Venda, String> vendaFuncionarioColumn;
+
+    @FXML
+    private TableColumn<Venda, BigDecimal> vendaTotalColumn;
+
+    @FXML
     private Button vendaButton;
 
     @FXML
     private Button produtosButton;
-
-    @FXML
-    private Button estoqueButton;
 
     @FXML
     private Button caixaButton;
@@ -66,9 +77,16 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        vendaIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        vendaFuncionarioColumn.setCellValueFactory(cellData ->
+                javafx.beans.binding.Bindings.createStringBinding(
+                        () -> cellData.getValue().getFuncionario() != null
+                                ? cellData.getValue().getFuncionario().getNome()
+                                : ""));
+        vendaTotalColumn.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+
         vendaButton.setOnAction(event -> stageManager.showScene("/fxml/venda.fxml", "PDV - Ponto de Venda", true));
         produtosButton.setOnAction(event -> stageManager.showScene("/fxml/produtos.fxml", "Produtos PDV", true));
-        estoqueButton.setOnAction(event -> stageManager.showScene("/fxml/estoque.fxml", "Estoque PDV", true));
         caixaButton.setOnAction(event -> stageManager.showScene("/fxml/caixa.fxml", "Caixa PDV", true));
         relatoriosButton.setOnAction(event -> stageManager.showScene("/fxml/relatorios.fxml", "Relatórios PDV", true));
 
@@ -84,7 +102,9 @@ public class DashboardController {
                 .filter(v -> v != null)
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add));
         produtosCadastradosLabel.setText(String.valueOf(produtos.size()));
-        vendasDiaLabel.setText(String.valueOf(vendas.size()));
+        vendasDiaLabel.setText(String.valueOf(vendas.stream()
+                .filter(v -> v.getDataVenda() != null && v.getDataVenda().toLocalDate().equals(LocalDate.now()))
+                .count()));
         estoqueBaixoLabel.setText(String.valueOf(produtos.stream().filter(p -> p.getEstoque() != null && p.getEstoque() < 5).count()));
 
         vendasRecentesTable.setItems(FXCollections.observableArrayList(vendas));

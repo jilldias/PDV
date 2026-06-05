@@ -22,7 +22,6 @@
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <Button fx:id="vendaButton" styleClass="secondary-button" text="Nova Venda" />
                 <Button fx:id="produtosButton" styleClass="secondary-button" text="Produtos" />
-                <Button fx:id="estoqueButton" styleClass="secondary-button" text="Estoque" />
                 <Button fx:id="caixaButton" styleClass="secondary-button" text="Caixa" />
                 <Button fx:id="relatoriosButton" styleClass="secondary-button" text="Relatórios" />
             </HBox>
@@ -54,9 +53,9 @@
             <Label text="Vendas Recentes" styleClass="title-label" />
             <TableView fx:id="vendasRecentesTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn prefWidth="75.0" text="Venda" />
-                    <TableColumn prefWidth="75.0" text="Funcionário" />
-                    <TableColumn prefWidth="75.0" text="Total" />
+                    <TableColumn fx:id="vendaIdColumn" prefWidth="75.0" text="Venda" />
+                    <TableColumn fx:id="vendaFuncionarioColumn" prefWidth="160.0" text="Funcionário" />
+                    <TableColumn fx:id="vendaTotalColumn" prefWidth="100.0" text="Total" />
                 </columns>
             </TableView>
         </VBox>
