@@ -1,80 +1,248 @@
-# PDV SYSTEM
+# PDV Desktop Java
 
-Sistema de Ponto de Venda (PDV) desenvolvido em Java com Spring Boot no backend e JavaFX no frontend desktop.
+> **Status do Projeto:** 🚧 Em desenvolvimento
+>
+> Este projeto encontra-se em fase ativa de desenvolvimento, recebendo melhorias contínuas, correções de arquitetura, refatorações de código e adequações estruturais com o objetivo de torná-lo mais robusto, escalável e alinhado às boas práticas de desenvolvimento de software. Algumas funcionalidades ainda estão em processo de implementação e otimização.
 
-O projeto surgiu a partir da evolução de um CRUD previamente desenvolvido e está sendo utilizado como base de aprendizado para arquitetura de software, APIs REST, banco de dados relacionais e aplicações desktop.
+## Sobre o Projeto
 
-O sistema ainda está em desenvolvimento e passará por melhorias estruturais e visuais ao longo da evolução do projeto.
+O **PDV Desktop Java** é um sistema de Ponto de Venda (PDV) desenvolvido para gerenciamento de vendas, produtos, estoque e operações comerciais em ambiente desktop.
+
+O projeto foi construído utilizando Java moderno e tecnologias do ecossistema Spring, buscando aplicar conceitos de desenvolvimento corporativo, persistência de dados, arquitetura em camadas e interfaces gráficas modernas.
+
+## Objetivos
+
+* Gerenciar produtos e categorias.
+* Controlar estoque.
+* Realizar vendas.
+* Gerar relatórios gerenciais.
+* Gerenciar funcionários e usuários do sistema.
+* Aplicar boas práticas de desenvolvimento Java.
+* Servir como projeto de estudo e evolução profissional.
 
 ---
 
 # Tecnologias Utilizadas
 
-## Backend
-- Java 26
-- Spring Boot
-- Spring Data JPA
-- Hibernate
-- Maven
-- MariaDB
+## Linguagem
 
-## Frontend
-- JavaFX
-- FXML
-- CSS
+* Java 21
+
+## Interface Gráfica
+
+* JavaFX
+
+## Framework
+
+* Spring Boot
+* Spring Context
+* Spring Data JPA
+
+## Persistência de Dados
+
+* Hibernate ORM
+* JPA (Jakarta Persistence API)
+
+## Banco de Dados
+
+* MariaDB
+
+## Gerenciamento de Dependências
+
+* Maven
+
+## Controle de Versão
+
+* Git
+* GitHub
+
+---
+
+# Arquitetura
+
+O projeto segue uma arquitetura em camadas para promover organização, manutenção e escalabilidade.
+
+```text
+src
+├── controller
+├── service
+├── repository
+├── model
+├── config
+├── javafx
+│   ├── controller
+│   └── StageManager
+├── resources
+│   ├── css
+│   └── fxml
+└── exception
+```
+
+### Camadas
+
+#### Controller
+
+Responsável por receber as ações da interface e encaminhar para a camada de serviço.
+
+#### Service
+
+Contém as regras de negócio da aplicação.
+
+#### Repository
+
+Responsável pelo acesso aos dados utilizando Spring Data JPA.
+
+#### Model
+
+Entidades do sistema mapeadas para o banco de dados.
+
+#### JavaFX
+
+Responsável pela interface gráfica e navegação entre telas.
+
+---
+
+# Funcionalidades Implementadas
+
+## Dashboard
+
+* Tela inicial do sistema.
+* Navegação entre módulos.
+
+## Produtos
+
+* Cadastro de produtos.
+* Consulta de produtos.
+* Controle de estoque.
+
+## Categorias
+
+* Cadastro de categorias.
+* Associação de categorias aos produtos.
+
+## Vendas
+
+* Registro de vendas.
+* Atualização de estoque.
+
+## Relatórios
+
+* Estrutura inicial para geração de relatórios.
 
 ---
 
 # Funcionalidades Planejadas
 
-- Cadastro de produtos
-- Controle de estoque
-- Sistema de vendas
-- Histórico de vendas
-- Controle de usuários
-- Dashboard administrativo
-- Relatórios
-- Integração frontend/backend
+* Edição de produtos.
+* Exclusão lógica de registros.
+* Controle de usuários e permissões.
+* Auditoria de operações.
+* Relatórios avançados.
+* Exportação para PDF.
+* Dashboard com métricas de vendas.
+* Controle financeiro.
+* Melhorias visuais na interface.
+* Tratamento global de exceções.
+* Testes automatizados.
 
 ---
 
-# Estrutura do Projeto
+# Requisitos
 
-```bash
-src/main/java/com/pdv
-│
-├── controller
-├── service
-├── repository
-├── model
-├── dto
-├── config
-├── security
-└── Application.java
+* Java 21 ou superior
+* Maven 3.9+
+* MariaDB
+* Git
+
+---
+
+# Configuração do Banco de Dados
+
+Criar um banco MariaDB:
+
+```sql
+CREATE DATABASE pdv;
+```
+
+Configurar o arquivo:
+
+```properties
+application.properties
+```
+
+Exemplo:
+
+```properties
+spring.datasource.url=jdbc:mariadb://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:pdv}
+spring.datasource.username=${DB_USER:}
+spring.datasource.password=${DB_PASSWORD:}
+
+spring.jpa.hibernate.ddl-auto=${JPA_DDL_AUTO:update}
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true
 ```
 
 ---
 
+# Executando o Projeto
 
-# Objetivos do Projeto
+Clonar o repositório:
 
-- Evoluir um CRUD simples para um sistema comercial completo
-- Aprender arquitetura em camadas
-- Consolidar conhecimentos em Spring Boot
-- Desenvolver aplicações desktop com JavaFX
-- Praticar integração entre API e interface gráfica
+```bash
+git clone https://github.com/jilldias/pdv.git
+```
+
+Entrar na pasta:
+
+```bash
+cd PDVJILL
+```
+
+Compilar:
+
+```bash
+mvn clean install
+```
+
+Executar:
+
+```bash
+mvn javafx:run
+```
+
+---
+
+# Boas Práticas Aplicadas
+
+* Programação Orientada a Objetos (POO)
+* Arquitetura em Camadas
+* Injeção de Dependência
+* Separação de Responsabilidades
+* Persistência com JPA/Hibernate
+* Uso de Maven para gerenciamento de dependências
+* Versionamento com Git
 
 ---
 
 # Roadmap
 
-- [ ] CRUD de produtos
-- [ ] Controle de estoque
-- [ ] Sistema de vendas
-- [ ] Login e autenticação
-- [ ] Relatórios
-- [ ] Testes automatizados
-- [ ] Dockerização
-- [ ] Deploy
+* [ ] Refatoração geral da arquitetura
+* [ ] Melhorias visuais das telas JavaFX
+* [ ] Implementação completa do módulo de vendas
+* [ ] Implementação completa do módulo de estoque
+* [ ] Sistema de autenticação
+* [ ] Relatórios avançados
+* [ ] Testes automatizados
+* [ ] Documentação técnica completa
 
 ---
+
+# Autor
+
+Desenvolvido por **Jillian Dias** como projeto de aprendizado, prática de desenvolvimento Java e evolução para aplicações corporativas desktop.
+
+---
+
+# Licença
+
+Este projeto possui finalidade educacional e de estudo.
