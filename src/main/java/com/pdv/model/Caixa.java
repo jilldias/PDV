@@ -29,7 +29,7 @@ public class Caixa {
     private LocalDateTime dataFechamento;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "funcionario_id")
+    @JoinColumn(name = "funcionario_id", nullable = false)
     private Funcionario funcionario;
 
     public Caixa() {

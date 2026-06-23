@@ -15,6 +15,8 @@ public class VendaResponseDTO {
     private Long caixaId;
     private String formaPagamento;
     private BigDecimal total;
+    private BigDecimal valorPago;
+    private BigDecimal troco;
     private String status;
     private LocalDateTime dataVenda;
     private List<ItemVendaResponseDTO> itens = new ArrayList<>();
@@ -22,7 +24,7 @@ public class VendaResponseDTO {
     public VendaResponseDTO() {
     }
 
-    public VendaResponseDTO(Long id, Long clienteId, String clienteNome, Long funcionarioId, String funcionarioNome, Long caixaId, String formaPagamento, BigDecimal total, String status, LocalDateTime dataVenda, List<ItemVendaResponseDTO> itens) {
+    public VendaResponseDTO(Long id, Long clienteId, String clienteNome, Long funcionarioId, String funcionarioNome, Long caixaId, String formaPagamento, BigDecimal total, BigDecimal valorPago, BigDecimal troco, String status, LocalDateTime dataVenda, List<ItemVendaResponseDTO> itens) {
         this.id = id;
         this.clienteId = clienteId;
         this.clienteNome = clienteNome;
@@ -31,6 +33,8 @@ public class VendaResponseDTO {
         this.caixaId = caixaId;
         this.formaPagamento = formaPagamento;
         this.total = total;
+        this.valorPago = valorPago;
+        this.troco = troco;
         this.status = status;
         this.dataVenda = dataVenda;
         this.itens = itens;
@@ -98,6 +102,22 @@ public class VendaResponseDTO {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
+    }
+
+    public BigDecimal getValorPago() {
+        return valorPago;
+    }
+
+    public void setValorPago(BigDecimal valorPago) {
+        this.valorPago = valorPago;
+    }
+
+    public BigDecimal getTroco() {
+        return troco;
+    }
+
+    public void setTroco(BigDecimal troco) {
+        this.troco = troco;
     }
 
     public String getStatus() {

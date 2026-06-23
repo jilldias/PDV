@@ -3,6 +3,7 @@ package com.pdv.service;
 import com.pdv.exception.ResourceNotFoundException;
 import com.pdv.model.Funcionario;
 import com.pdv.repository.FuncionarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +13,17 @@ import java.util.Optional;
 public class FuncionarioService {
 
     private final FuncionarioRepository funcionarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder) {
         this.funcionarioRepository = funcionarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Funcionario criarFuncionario(Funcionario funcionario) {
-        // TESTE: senha armazenada em texto puro (sem hash)
+        if (funcionario.getSenha() != null && !funcionario.getSenha().isBlank()) {
+            funcionario.setSenha(passwordEncoder.encode(funcionario.getSenha()));
+        }
         return funcionarioRepository.save(funcionario);
     }
 
@@ -45,7 +50,7 @@ public class FuncionarioService {
 
         // senha só atualiza se vier preenchida
         if (dadosAtualizados.getSenha() != null && !dadosAtualizados.getSenha().trim().isEmpty()) {
-            funcionarioExistente.setSenha(dadosAtualizados.getSenha());
+            funcionarioExistente.setSenha(passwordEncoder.encode(dadosAtualizados.getSenha()));
         }
 
         return funcionarioRepository.save(funcionarioExistente);

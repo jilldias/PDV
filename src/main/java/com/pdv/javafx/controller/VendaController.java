@@ -16,7 +16,12 @@ import javafx.scene.control.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Component
 public class VendaController {
@@ -52,6 +57,12 @@ public class VendaController {
     private Label totalLabel;
 
     @FXML
+    private TextField valorPagoField;
+
+    @FXML
+    private Label trocoLabel;
+
+    @FXML
     private ComboBox<String> formaPagamentoCombo;
 
     @FXML
@@ -69,6 +80,9 @@ public class VendaController {
     @FXML
     private TableColumn<ItemVenda, BigDecimal> subtotalColumn;
 
+    @FXML
+    private TableColumn<ItemVenda, Void> acaoColumn;
+
     private final StageManager stageManager;
     private final SessionInfo sessionInfo;
     private final ProdutoService produtoService;
@@ -76,6 +90,7 @@ public class VendaController {
     private final FuncionarioService funcionarioService;
     private final CarrinhoCompras carrinho;
     private Produto produtoSelecionado;
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"));
 
     public VendaController(StageManager stageManager,
                            SessionInfo sessionInfo,
@@ -102,11 +117,13 @@ public class VendaController {
 
         formaPagamentoCombo.setItems(FXCollections.observableArrayList(
                 "DINHEIRO",
-                "CARTÃO CRÉDITO",
-                "CARTÃO DÉBITO",
+                "CARTAO CREDITO",
+                "CARTAO DEBITO",
                 "PIX",
                 "CHEQUE"
         ));
+        formaPagamentoCombo.valueProperty().addListener((obs, anterior, atual) -> atualizarPagamentoDinheiro());
+        valorPagoField.textProperty().addListener((obs, anterior, atual) -> atualizarTroco());
 
         if (sessionInfo.hasAuthenticatedUser()) {
             usuarioLabel.setText(sessionInfo.getAuthenticatedUser().getNome());
@@ -133,35 +150,87 @@ public class VendaController {
                 () -> cellData.getValue().getSubtotal()
             )
         );
+        precoColumn.setCellFactory(column -> formatarMoedaCell());
+        subtotalColumn.setCellFactory(column -> formatarMoedaCell());
+        acaoColumn.setCellFactory(column -> new TableCell<>() {
+            private final Button removerButton = new Button("Remover");
+
+            {
+                removerButton.setOnAction(event -> {
+                    ItemVenda item = getTableView().getItems().get(getIndex());
+                    carrinho.getItens().remove(item);
+                    atualizarTotal();
+                    atualizarTroco();
+                    vendasTable.refresh();
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : removerButton);
+            }
+        });
 
         vendasTable.setItems(carrinho.getItens());
+        atualizarPagamentoDinheiro();
     }
 
     private void buscarProduto() {
-        String codigoBarras = codigoBarrasField.getText();
-        if (codigoBarras == null || codigoBarras.isBlank()) {
-            exibirErro("Informe o código de barras");
+        String termo = codigoBarrasField.getText();
+        if (termo == null || termo.isBlank()) {
+            exibirErro("Informe o nome ou código de barras");
             codigoBarrasField.requestFocus();
             return;
         }
 
-        var produto = produtoService.buscarPorCodigoBarras(codigoBarras);
+        var produto = produtoService.buscarPorCodigoBarras(termo.trim());
         if (produto.isPresent()) {
-            Produto p = produto.get();
-            if (!p.getAtivo()) {
-                exibirErro("Produto inativo não pode ser vendido");
-                return;
-            }
-            this.produtoSelecionado = p;
-            produtoInfoLabel.setText(String.format("%s - R$ %.2f (Estoque: %d)",
-                    p.getNome(), p.getPreco(), p.getEstoque()));
-            produtoInfoLabel.setStyle("-fx-text-fill: #27ae60;");
+            selecionarProdutoEncontrado(produto.get());
             codigoBarrasField.clear();
-        } else {
-            exibirErro("Produto não encontrado");
-            codigoBarrasField.clear();
-            codigoBarrasField.requestFocus();
+            return;
         }
+
+        List<Produto> encontrados = produtoService.buscarPorNomeOuCodigo(termo.trim());
+        if (encontrados.isEmpty()) {
+            exibirErro("Produto não encontrado");
+            codigoBarrasField.requestFocus();
+            return;
+        }
+
+        Produto escolhido = encontrados.size() == 1 ? encontrados.get(0) : escolherProduto(encontrados);
+        if (escolhido != null) {
+            selecionarProdutoEncontrado(escolhido);
+            codigoBarrasField.clear();
+        }
+    }
+
+    private Produto escolherProduto(List<Produto> produtos) {
+        Map<String, Produto> opcoes = new LinkedHashMap<>();
+        for (Produto produto : produtos) {
+            opcoes.put(String.format("%s | %s | %s | Estoque: %d",
+                    produto.getCodigoBarras(),
+                    produto.getNome(),
+                    currencyFormat.format(produto.getPreco()),
+                    produto.getEstoque()), produto);
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(opcoes.keySet().iterator().next(), opcoes.keySet());
+        dialog.setTitle("Selecionar produto");
+        dialog.setHeaderText("Mais de um produto encontrado");
+        dialog.setContentText("Produto:");
+        return dialog.showAndWait().map(opcoes::get).orElse(null);
+    }
+
+    private void selecionarProdutoEncontrado(Produto produto) {
+        if (!Boolean.TRUE.equals(produto.getAtivo())) {
+            exibirErro("Produto inativo não pode ser vendido");
+            return;
+        }
+        this.produtoSelecionado = produto;
+        produtoInfoLabel.setText(String.format("%s - %s (Estoque: %d)",
+                produto.getNome(), currencyFormat.format(produto.getPreco()), produto.getEstoque()));
+        produtoInfoLabel.setStyle("-fx-text-fill: #27ae60;");
     }
 
     private void adicionarAoCarrinho() {
@@ -186,6 +255,7 @@ public class VendaController {
             carrinho.adicionarProduto(produtoSelecionado, quantidade);
             vendasTable.refresh();
             atualizarTotal();
+            atualizarTroco();
             produtoSelecionado = null;
             produtoInfoLabel.setText("");
             quantidadeSpinner.getValueFactory().setValue(1);
@@ -202,6 +272,8 @@ public class VendaController {
         }
         carrinho.limpar();
         atualizarTotal();
+        valorPagoField.clear();
+        atualizarTroco();
         produtoSelecionado = null;
         produtoInfoLabel.setText("");
         exibirSucesso("Venda cancelada");
@@ -229,15 +301,26 @@ public class VendaController {
             Venda venda = new Venda();
             venda.setFuncionario(funcionario);
             venda.setFormaPagamento(formaPagamento);
+            if ("DINHEIRO".equalsIgnoreCase(formaPagamento)) {
+                BigDecimal valorPago = parseBigDecimal(valorPagoField.getText());
+                if (valorPago.compareTo(carrinho.obterTotal()) < 0) {
+                    exibirErro("Valor pago menor que o total da venda");
+                    return;
+                }
+                venda.setValorPago(valorPago);
+            }
             venda.setItens(new ArrayList<>(carrinho.getItens()));
 
             Venda vendaSalva = vendaService.registrarVenda(venda);
-            exibirSucesso(String.format("Venda %d finalizada! Total: R$ %.2f",
+            exibirSucesso(String.format("Venda %d finalizada! Total: %s | Troco: %s",
                     vendaSalva.getId(),
-                    vendaSalva.getValorTotal()));
+                    currencyFormat.format(vendaSalva.getValorTotal()),
+                    currencyFormat.format(vendaSalva.getTroco() == null ? BigDecimal.ZERO : vendaSalva.getTroco())));
             carrinho.limpar();
             vendasTable.refresh();
             atualizarTotal();
+            valorPagoField.clear();
+            atualizarTroco();
             formaPagamentoCombo.getSelectionModel().clearSelection();
         } catch (Exception e) {
             exibirErro("Erro ao finalizar venda: " + e.getMessage());
@@ -254,7 +337,28 @@ public class VendaController {
 
     private void atualizarTotal() {
         BigDecimal total = carrinho.obterTotal();
-        totalLabel.setText(String.format("R$ %.2f", total));
+        totalLabel.setText(currencyFormat.format(total));
+        atualizarTroco();
+    }
+
+    private void atualizarPagamentoDinheiro() {
+        boolean dinheiro = "DINHEIRO".equalsIgnoreCase(formaPagamentoCombo.getValue());
+        valorPagoField.setDisable(!dinheiro);
+        if (!dinheiro) {
+            valorPagoField.clear();
+        }
+        atualizarTroco();
+    }
+
+    private void atualizarTroco() {
+        if (!"DINHEIRO".equalsIgnoreCase(formaPagamentoCombo.getValue())) {
+            trocoLabel.setText(currencyFormat.format(BigDecimal.ZERO));
+            return;
+        }
+
+        BigDecimal valorPago = parseBigDecimal(valorPagoField.getText());
+        BigDecimal troco = valorPago.subtract(carrinho.obterTotal());
+        trocoLabel.setText(currencyFormat.format(troco.max(BigDecimal.ZERO)));
     }
 
     private void exibirErro(String mensagem) {
@@ -265,5 +369,22 @@ public class VendaController {
     private void exibirSucesso(String mensagem) {
         produtoInfoLabel.setText(mensagem);
         produtoInfoLabel.setStyle("-fx-text-fill: #27ae60;");
+    }
+
+    private TableCell<ItemVenda, BigDecimal> formatarMoedaCell() {
+        return new TableCell<>() {
+            @Override
+            protected void updateItem(BigDecimal valor, boolean empty) {
+                super.updateItem(valor, empty);
+                setText(empty || valor == null ? "" : currencyFormat.format(valor));
+            }
+        };
+    }
+
+    private BigDecimal parseBigDecimal(String valor) {
+        if (valor == null || valor.isBlank()) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(valor.trim().replace(',', '.'));
     }
 }

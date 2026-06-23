@@ -26,29 +26,45 @@ public class RelatorioService {
         try (PDDocument documento = new PDDocument(); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             PDPage pagina = new PDPage();
             documento.addPage(pagina);
+            PDPageContentStream conteudo = new PDPageContentStream(documento, pagina);
 
-            try (PDPageContentStream conteudo = new PDPageContentStream(documento, pagina)) {
+            try {
                 conteudo.beginText();
                 conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
                 conteudo.newLineAtOffset(50, 750);
-                conteudo.showText("Relatório de Vendas");
+                conteudo.showText("Relatorio de Vendas");
                 conteudo.endText();
 
                 int y = 720;
                 conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
                 for (Venda venda : vendas) {
-                    if (y < 100) {
+                    if (y < 120) {
                         conteudo.close();
                         pagina = new PDPage();
                         documento.addPage(pagina);
+                        conteudo = new PDPageContentStream(documento, pagina);
+                        conteudo.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 10);
                         y = 750;
                     }
-                    conteudo.beginText();
-                    conteudo.newLineAtOffset(50, y);
-                    conteudo.showText(String.format("Venda %d | Funcionário %s | Total: R$ %s", venda.getId(), venda.getFuncionario().getNome(), venda.getValorTotal().toPlainString()));
-                    conteudo.endText();
-                    y -= 18;
+
+                    y = escreverLinha(conteudo, y, String.format("Venda %d | Funcionario: %s | Pagamento: %s | Total: R$ %s | Troco: R$ %s",
+                            venda.getId(),
+                            venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "",
+                            venda.getFormaPagamento() != null ? venda.getFormaPagamento() : "",
+                            valor(venda.getValorTotal()),
+                            valor(venda.getTroco())));
+
+                    for (ItemVenda item : venda.getItens()) {
+                        y = escreverLinha(conteudo, y, String.format("  - %s | Qtd: %d | Unit.: R$ %s | Subtotal: R$ %s",
+                                item.getProduto() != null ? item.getProduto().getNome() : "",
+                                item.getQuantidade(),
+                                valor(item.getPrecoUnitario()),
+                                valor(item.getSubtotal())));
+                    }
+                    y -= 8;
                 }
+            } finally {
+                conteudo.close();
             }
 
             documento.save(output);
@@ -56,6 +72,18 @@ public class RelatorioService {
         } catch (IOException ex) {
             throw new RuntimeException("Falha ao gerar relatório em PDF", ex);
         }
+    }
+
+    private int escreverLinha(PDPageContentStream conteudo, int y, String texto) throws IOException {
+        conteudo.beginText();
+        conteudo.newLineAtOffset(50, y);
+        conteudo.showText(texto.replace('\n', ' '));
+        conteudo.endText();
+        return y - 16;
+    }
+
+    private String valor(BigDecimal valor) {
+        return valor == null ? "0.00" : valor.toPlainString();
     }
 
     public byte[] exportarEstoqueExcel(List<Produto> produtos) {

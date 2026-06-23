@@ -1,24 +1,26 @@
 CREATE TABLE categorias (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL UNIQUE,
-    descricao VARCHAR(250)
+    descricao VARCHAR(255)
 );
 
 CREATE TABLE funcionarios (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(120) NOT NULL,
-    cargo VARCHAR(100) NOT NULL,
-    login VARCHAR(80) NOT NULL UNIQUE,
+    nome VARCHAR(150) NOT NULL,
+    cargo VARCHAR(100),
+    login VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL
+    role VARCHAR(20) NOT NULL,
+    email VARCHAR(150),
+    telefone VARCHAR(50)
 );
 
 CREATE TABLE clientes (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(120) NOT NULL,
-    cpf VARCHAR(14) NOT NULL UNIQUE,
-    telefone VARCHAR(20),
-    email VARCHAR(120),
+    nome VARCHAR(150) NOT NULL,
+    cpf VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(150),
+    telefone VARCHAR(50),
     endereco VARCHAR(255)
 );
 
@@ -49,11 +51,13 @@ CREATE TABLE vendas (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     data_venda DATETIME NOT NULL,
     valor_total DECIMAL(15, 2) NOT NULL,
+    valor_pago DECIMAL(15, 2),
+    troco DECIMAL(15, 2),
     status VARCHAR(20) NOT NULL,
     funcionario_id BIGINT NOT NULL,
     caixa_id BIGINT,
     cliente_id BIGINT,
-    forma_pagamento VARCHAR(20) NOT NULL,
+    forma_pagamento VARCHAR(50) NOT NULL,
     CONSTRAINT fk_venda_funcionario FOREIGN KEY (funcionario_id) REFERENCES funcionarios(id),
     CONSTRAINT fk_venda_caixa FOREIGN KEY (caixa_id) REFERENCES caixas(id),
     CONSTRAINT fk_venda_cliente FOREIGN KEY (cliente_id) REFERENCES clientes(id)
@@ -68,4 +72,14 @@ CREATE TABLE itens_venda (
     venda_id BIGINT NOT NULL,
     CONSTRAINT fk_itemvenda_produto FOREIGN KEY (produto_id) REFERENCES produtos(id),
     CONSTRAINT fk_itemvenda_venda FOREIGN KEY (venda_id) REFERENCES vendas(id)
+);
+
+CREATE TABLE movimentacoes_estoque (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    produto_id BIGINT NOT NULL,
+    quantidade INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL,
+    data_movimentacao DATETIME NOT NULL,
+    observacao VARCHAR(250),
+    CONSTRAINT fk_movimentacao_produto FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );

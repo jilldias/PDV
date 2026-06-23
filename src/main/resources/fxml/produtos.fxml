@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.ProdutoFxController" stylesheets="@/css/style.css">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.ProdutoFxController" stylesheets="@/css/style.css">
     <top>
         <VBox spacing="10.0" styleClass="dashboard-header" BorderPane.alignment="CENTER">
             <padding>
@@ -32,16 +32,16 @@
                 <TextField fx:id="searchField" promptText="Pesquisar produto" HBox.hgrow="ALWAYS" />
                 <Button fx:id="searchButton" text="Buscar" />
                 <Button fx:id="novoProdutoButton" styleClass="primary-button" text="Novo Produto" />
-                <Button fx:id="selecionarProdutoButton" text="Selecionar" />
                 <Button fx:id="alterarProdutoButton" styleClass="primary-button" text="Alterar" />
             </HBox>
             <Label fx:id="produtoSelecionadoLabel" text="Nenhum produto selecionado" />
             <TableView fx:id="produtoTable" prefHeight="400.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="nomeColumn" prefWidth="150.0" text="Nome" />
-                    <TableColumn fx:id="categoriaColumn" prefWidth="120.0" text="Categoria" />
-                    <TableColumn fx:id="precoColumn" prefWidth="100.0" text="Preço" />
-                    <TableColumn fx:id="estoqueColumn" prefWidth="80.0" text="Estoque" />
+                    <TableColumn fx:id="nomeColumn" prefWidth="220.0" text="Nome" />
+                    <TableColumn fx:id="codigoBarrasColumn" prefWidth="160.0" text="Código de barras" />
+                    <TableColumn fx:id="categoriaColumn" prefWidth="160.0" text="Categoria" />
+                    <TableColumn fx:id="precoColumn" prefWidth="120.0" text="Preço" />
+                    <TableColumn fx:id="estoqueColumn" prefWidth="90.0" text="Estoque" />
                 </columns>
             </TableView>
         </VBox>

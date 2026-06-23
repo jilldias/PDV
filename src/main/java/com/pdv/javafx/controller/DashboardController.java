@@ -9,14 +9,18 @@ import com.pdv.service.VendaService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Locale;
 
 @Component
 public class DashboardController {
@@ -43,6 +47,9 @@ public class DashboardController {
     private TableColumn<Venda, String> vendaFuncionarioColumn;
 
     @FXML
+    private TableColumn<Venda, String> vendaPagamentoColumn;
+
+    @FXML
     private TableColumn<Venda, BigDecimal> vendaTotalColumn;
 
     @FXML
@@ -62,6 +69,7 @@ public class DashboardController {
     private final ProdutoService produtoService;
     private final VendaService vendaService;
     private final CaixaService caixaService;
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"));
 
     public DashboardController(StageManager stageManager,
                                SessionInfo sessionInfo,
@@ -83,7 +91,24 @@ public class DashboardController {
                         () -> cellData.getValue().getFuncionario() != null
                                 ? cellData.getValue().getFuncionario().getNome()
                                 : ""));
+        vendaPagamentoColumn.setCellValueFactory(new PropertyValueFactory<>("formaPagamento"));
         vendaTotalColumn.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+        vendaTotalColumn.setCellFactory(column -> new javafx.scene.control.TableCell<>() {
+            @Override
+            protected void updateItem(BigDecimal valor, boolean empty) {
+                super.updateItem(valor, empty);
+                setText(empty || valor == null ? "" : currencyFormat.format(valor));
+            }
+        });
+        vendasRecentesTable.setRowFactory(table -> {
+            TableRow<Venda> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    exibirVenda(row.getItem());
+                }
+            });
+            return row;
+        });
 
         vendaButton.setOnAction(event -> stageManager.showScene("/fxml/venda.fxml", "PDV - Ponto de Venda", true));
         produtosButton.setOnAction(event -> stageManager.showScene("/fxml/produtos.fxml", "Produtos PDV", true));
@@ -97,10 +122,10 @@ public class DashboardController {
         var vendas = vendaService.listarTodas();
         var produtos = produtoService.listarTodos();
 
-        totalVendidoLabel.setText("R$ " + vendas.stream()
+        totalVendidoLabel.setText(currencyFormat.format(vendas.stream()
                 .map(v -> v.getValorTotal())
                 .filter(v -> v != null)
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add));
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add)));
         produtosCadastradosLabel.setText(String.valueOf(produtos.size()));
         vendasDiaLabel.setText(String.valueOf(vendas.stream()
                 .filter(v -> v.getDataVenda() != null && v.getDataVenda().toLocalDate().equals(LocalDate.now()))
@@ -108,5 +133,27 @@ public class DashboardController {
         estoqueBaixoLabel.setText(String.valueOf(produtos.stream().filter(p -> p.getEstoque() != null && p.getEstoque() < 5).count()));
 
         vendasRecentesTable.setItems(FXCollections.observableArrayList(vendas));
+    }
+
+    private void exibirVenda(Venda venda) {
+        StringBuilder descricao = new StringBuilder();
+        descricao.append("Venda #").append(venda.getId()).append("\n");
+        descricao.append("Funcionario: ").append(venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "").append("\n");
+        descricao.append("Forma de pagamento: ").append(venda.getFormaPagamento()).append("\n");
+        descricao.append("Total: ").append(currencyFormat.format(venda.getValorTotal())).append("\n");
+        descricao.append("Troco: ").append(currencyFormat.format(venda.getTroco() == null ? BigDecimal.ZERO : venda.getTroco())).append("\n\n");
+        descricao.append("Produtos:\n");
+        venda.getItens().forEach(item -> descricao.append("- ")
+                .append(item.getProduto() != null ? item.getProduto().getNome() : "")
+                .append(" | Qtd: ").append(item.getQuantidade())
+                .append(" | Unit.: ").append(currencyFormat.format(item.getPrecoUnitario()))
+                .append(" | Subtotal: ").append(currencyFormat.format(item.getSubtotal()))
+                .append("\n"));
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Venda");
+        alert.setHeaderText("Descricao da venda");
+        alert.setContentText(descricao.toString());
+        alert.showAndWait();
     }
 }

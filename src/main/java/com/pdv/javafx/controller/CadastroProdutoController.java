@@ -62,7 +62,6 @@ public class CadastroProdutoController {
 
     @FXML
     public void initialize() {
-        // Configurar botão voltar UMA ÚNICA VEZ
         voltarButton.setOnAction(event -> voltarParaProdutos());
 
         // Carregar categorias

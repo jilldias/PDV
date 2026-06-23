@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.DashboardController" stylesheets="@/css/style.css">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.DashboardController" stylesheets="@/css/style.css">
     <top>
         <VBox spacing="10.0" styleClass="dashboard-header" BorderPane.alignment="CENTER">
             <padding>
@@ -51,11 +51,12 @@
                 <Label fx:id="estoqueBaixoLabel" styleClass="metric-value" text="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </GridPane>
             <Label text="Vendas Recentes" styleClass="title-label" />
-            <TableView fx:id="vendasRecentesTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="vendasRecentesTable" prefHeight="200.0" styleClass="table-view" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="vendaIdColumn" prefWidth="75.0" text="Venda" />
-                    <TableColumn fx:id="vendaFuncionarioColumn" prefWidth="160.0" text="Funcionário" />
-                    <TableColumn fx:id="vendaTotalColumn" prefWidth="100.0" text="Total" />
+                    <TableColumn fx:id="vendaFuncionarioColumn" prefWidth="220.0" text="Funcionário" />
+                    <TableColumn fx:id="vendaPagamentoColumn" prefWidth="160.0" text="Pagamento" />
+                    <TableColumn fx:id="vendaTotalColumn" prefWidth="120.0" text="Total" />
                 </columns>
             </TableView>
         </VBox>

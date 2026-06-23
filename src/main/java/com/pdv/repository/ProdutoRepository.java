@@ -21,5 +21,8 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     @EntityGraph(attributePaths = "categoria")
     List<Produto> findByNomeContainingIgnoreCase(String nome);
 
+    @EntityGraph(attributePaths = "categoria")
+    List<Produto> findByNomeContainingIgnoreCaseOrCodigoBarrasContainingIgnoreCase(String nome, String codigoBarras);
+
     List<Produto> findByCategoriaNomeIgnoreCase(String nomeCategoria);
 }

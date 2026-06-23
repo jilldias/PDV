@@ -160,6 +160,8 @@ public final class DtoMapper {
         dto.setClienteId(venda.getCliente() != null ? venda.getCliente().getId() : null);
         dto.setClienteNome(venda.getCliente() != null ? venda.getCliente().getNome() : null);
         dto.setFormaPagamento(venda.getFormaPagamento());
+        dto.setValorPago(venda.getValorPago());
+        dto.setTroco(venda.getTroco());
         dto.setStatus(venda.getStatus() != null ? venda.getStatus().name() : null);
         dto.setItens(venda.getItens().stream().map(DtoMapper::toDTO).collect(Collectors.toList()));
         return dto;

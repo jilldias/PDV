@@ -30,7 +30,7 @@ public class Produto {
     @Column(name = "data_cadastro", nullable = false)
     private LocalDateTime dataCadastro;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 

@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.VendaController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pdv.javafx.controller.VendaController" stylesheets="@/css/style.css">
     <top>
         <VBox spacing="10.0" styleClass="dashboard-header" BorderPane.alignment="CENTER">
             <padding>
@@ -38,7 +38,7 @@
                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                 </padding>
                 <Label styleClass="title-label" text="Buscar Produto" />
-                <TextField fx:id="codigoBarrasField" promptText="Código de barras" />
+                <TextField fx:id="codigoBarrasField" promptText="Nome ou código de barras" />
                 <Button fx:id="buscarButton" styleClass="primary-button" text="Buscar Produto" />
                 <Label fx:id="produtoInfoLabel" text="Selecione um produto" wrapText="true" />
                 <Spinner fx:id="quantidadeSpinner" prefWidth="150.0" />
@@ -51,11 +51,11 @@
                 <Label styleClass="title-label" text="Itens da Venda" />
                 <TableView fx:id="vendasTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn prefWidth="150.0" text="Produto" fx:id="produtoColumn" />
+                        <TableColumn prefWidth="220.0" text="Produto" fx:id="produtoColumn" />
                         <TableColumn prefWidth="100.0" text="Qtd" fx:id="qtdColumn" />
                         <TableColumn prefWidth="120.0" text="Preço Unit." fx:id="precoColumn" />
                         <TableColumn prefWidth="120.0" text="Subtotal" fx:id="subtotalColumn" />
-                        <TableColumn prefWidth="80.0" text="Ação" fx:id="acaoColumn" />
+                        <TableColumn prefWidth="100.0" text="Ação" fx:id="acaoColumn" />
                     </columns>
                 </TableView>
                 <GridPane hgap="10.0" vgap="10.0">
@@ -63,6 +63,10 @@
                     <Label fx:id="totalLabel" styleClass="metric-value" text="R$ 0,00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                     <Label text="Forma de Pagamento:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                     <ComboBox fx:id="formaPagamentoCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Valor pago:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <TextField fx:id="valorPagoField" promptText="0,00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Troco:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="trocoLabel" styleClass="metric-value" text="R$ 0,00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 </GridPane>
                 <HBox spacing="10.0">
                     <Button fx:id="cancelarButton" text="Cancelar" />

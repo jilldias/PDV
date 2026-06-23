@@ -8,9 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Component
 public class ProdutoFxController {
@@ -23,9 +26,6 @@ public class ProdutoFxController {
 
     @FXML
     private Button novoProdutoButton;
-
-    @FXML
-    private Button selecionarProdutoButton;
 
     @FXML
     private Button alterarProdutoButton;
@@ -43,6 +43,9 @@ public class ProdutoFxController {
     private TableColumn<Produto, String> nomeColumn;
 
     @FXML
+    private TableColumn<Produto, String> codigoBarrasColumn;
+
+    @FXML
     private TableColumn<Produto, String> categoriaColumn;
 
     @FXML
@@ -55,6 +58,7 @@ public class ProdutoFxController {
     private final StageManager stageManager;
     private final ProdutoFormState produtoFormState;
     private Produto produtoSelecionado;
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("pt-BR"));
 
     public ProdutoFxController(ProdutoService produtoService, StageManager stageManager, ProdutoFormState produtoFormState) {
         this.produtoService = produtoService;
@@ -67,6 +71,7 @@ public class ProdutoFxController {
 
         // Configurar colunas da tabela
         nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        codigoBarrasColumn.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
         categoriaColumn.setCellValueFactory(cellData -> 
             javafx.beans.binding.Bindings.createStringBinding(
                 () -> cellData.getValue().getCategoria() != null ? 
@@ -75,6 +80,8 @@ public class ProdutoFxController {
         );
         precoColumn.setCellValueFactory(new PropertyValueFactory<>("preco"));
         estoqueColumn.setCellValueFactory(new PropertyValueFactory<>("estoque"));
+        precoColumn.setCellFactory(formatarMoeda());
+        estoqueColumn.setCellFactory(formatarInteiro());
 
         backButton.setOnAction(event ->
             stageManager.showScene("/fxml/dashboard.fxml", "PDV Dashboard", true)
@@ -83,16 +90,33 @@ public class ProdutoFxController {
         searchButton.setOnAction(event -> buscarProdutos());
 
         novoProdutoButton.setOnAction(event -> abrirFormularioProduto());
-        selecionarProdutoButton.setOnAction(event -> selecionarProduto());
         alterarProdutoButton.setOnAction(event -> abrirAlteracaoProduto());
+        produtoTable.getSelectionModel().selectedItemProperty().addListener((obs, anterior, atual) -> {
+            produtoSelecionado = atual;
+            produtoSelecionadoLabel.setText(atual == null ? "Nenhum produto selecionado" : "Selecionado: " + atual.getNome());
+        });
+        produtoTable.setRowFactory(table -> {
+            TableRow<Produto> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    produtoSelecionado = row.getItem();
+                    abrirAlteracaoProduto();
+                }
+            });
+            return row;
+        });
 
         buscarProdutos();
     }
 
     private void buscarProdutos() {
         try {
+            String termo = searchField.getText();
+            var produtos = termo == null || termo.isBlank()
+                    ? produtoService.listarTodos()
+                    : produtoService.buscarPorNomeOuCodigo(termo.trim());
             produtoTable.setItems(
-                FXCollections.observableArrayList(produtoService.listarTodos())
+                FXCollections.observableArrayList(produtos)
             );
         } catch (Exception e) {
             exibirErro("Erro ao carregar produtos: " + e.getMessage());
@@ -140,5 +164,25 @@ public class ProdutoFxController {
         alert.setHeaderText(null);
         alert.setContentText(mensagem);
         alert.showAndWait();
+    }
+
+    private Callback<TableColumn<Produto, BigDecimal>, TableCell<Produto, BigDecimal>> formatarMoeda() {
+        return column -> new TableCell<>() {
+            @Override
+            protected void updateItem(BigDecimal valor, boolean empty) {
+                super.updateItem(valor, empty);
+                setText(empty || valor == null ? "" : currencyFormat.format(valor));
+            }
+        };
+    }
+
+    private Callback<TableColumn<Produto, Integer>, TableCell<Produto, Integer>> formatarInteiro() {
+        return column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer valor, boolean empty) {
+                super.updateItem(valor, empty);
+                setText(empty || valor == null ? "" : valor.toString());
+            }
+        };
     }
 }

@@ -88,6 +88,15 @@ public class VendaService {
         venda.setCaixa(caixa);
         venda.setItens(itens);
         venda.setValorTotal(valorTotal);
+        if ("DINHEIRO".equalsIgnoreCase(venda.getFormaPagamento()) && venda.getValorPago() != null) {
+            if (venda.getValorPago().compareTo(valorTotal) < 0) {
+                throw new IllegalArgumentException("Valor pago menor que o total da venda");
+            }
+            venda.setTroco(venda.getValorPago().subtract(valorTotal));
+        } else {
+            venda.setValorPago(null);
+            venda.setTroco(BigDecimal.ZERO);
+        }
         venda.setDataVenda(LocalDateTime.now());
         venda.setStatus(VendaStatus.PROCESSADO);
         itens.forEach(item -> item.setVenda(venda));

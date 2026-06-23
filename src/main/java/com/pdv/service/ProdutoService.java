@@ -38,6 +38,13 @@ public class ProdutoService {
         return produtoRepository.findByNomeContainingIgnoreCase(nome);
     }
 
+    public List<Produto> buscarPorNomeOuCodigo(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listarTodos();
+        }
+        return produtoRepository.findByNomeContainingIgnoreCaseOrCodigoBarrasContainingIgnoreCase(termo, termo);
+    }
+
     public Optional<Produto> buscarPorCodigoBarras(String codigoBarras) {
         return produtoRepository.findByCodigoBarras(codigoBarras);
     }
